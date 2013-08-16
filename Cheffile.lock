@@ -1,0 +1,31 @@
+SITE
+  remote: http://community.opscode.com/api/v1
+  specs:
+    build-essential (1.4.0)
+    cutlery (0.2.6)
+      partial_search (>= 0.0.0)
+    partial_search (1.0.2)
+    psql (0.1.0)
+      cutlery (~> 0.1)
+    yum (2.3.0)
+
+PATH
+  remote: site-cookbooks
+  specs:
+    ghc (0.1.0)
+    imagemagick (0.1.0)
+    joelteon (0.1.0)
+      build-essential (>= 0.0.0)
+      ghc (>= 0.0.0)
+      imagemagick (>= 0.0.0)
+      postgres (>= 0.0.0)
+      yum (>= 0.0.0)
+    postgres (0.1.0)
+      psql (>= 0.0.0)
+
+DEPENDENCIES
+  ghc (>= 0)
+  imagemagick (>= 0)
+  joelteon (>= 0)
+  postgres (>= 0)
+
