@@ -1,0 +1,28 @@
+{
+  "sources": {
+    "ghc": {
+      "path": "./site-cookbooks/ghc"
+    },
+    "imagemagick": {
+      "path": "./site-cookbooks/imagemagick"
+    },
+    "joelteon": {
+      "path": "./site-cookbooks/joelteon"
+    },
+    "postgres": {
+      "path": "./site-cookbooks/postgres"
+    },
+    "build-essential": {
+      "locked_version": "1.4.0"
+    },
+    "yum": {
+      "locked_version": "2.3.0"
+    },
+    "psql": {
+      "locked_version": "0.1.0"
+    },
+    "cutlery": {
+      "locked_version": "0.2.2"
+    }
+  }
+}

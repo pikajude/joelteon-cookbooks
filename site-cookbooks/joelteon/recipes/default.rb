@@ -25,7 +25,7 @@ execute "install site dependencies" do
     "LD_LIBRARY_PATH" => "/usr/lib",
     "PKG_CONFIG_PATH" => "/usr/lib/pkgconfig"
   })
-  command "cabal install --only-dependencies"
+  command "cabal install --only-dependencies --force-reinstalls"
 end
 
 execute "build" do
