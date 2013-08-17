@@ -20,19 +20,19 @@ ghc_prefix = root
 directory ghc_src_prefix do
   recursive true
   action :create
-  notifies :run, "execute[unpack #{ghc_file}]"
 end
 
 remote_file ghc_file do
-  source "http://www.haskell.org/ghc/dist/#{ghc_version}/#{ghc_filename}"
+  source "http://10.0.0.1:8080/ghc-7.6.3-x86_64-unknown-linux.tar.bz2"
   checksum '398dd5fa6ed479c075ef9f638ef4fc2cc0fbf994e1b59b54d77c26a8e1e73ca0'
   action :create_if_missing
-  notifies :run, "execute[unpack #{ghc_file}]"
 end
 
 execute "unpack #{ghc_file}" do
-  command "mkdir -p #{ghc_install_path} && tar xjvf #{ghc_file} -C #{ghc_install_path} --strip-components 1"
-  notifies :run, "execute[install ghc]"
+  command %Q{
+    mkdir -p #{ghc_install_path} &&
+    tar xjvf #{ghc_file} -C #{ghc_install_path} --strip-components 1
+  }
   creates ghc_install_path
 end
 
@@ -54,19 +54,19 @@ cabal_prefix = cabal_root
 directory cabal_src_prefix do
   recursive true
   action :create
-  notifies :run, "execute[unpack #{cabal_file}]"
 end
 
 remote_file cabal_file do
   source "http://hackage.haskell.org/packages/archive/cabal-install/#{cabal_version}/#{cabal_filename}"
   checksum '66dfacc9f33e668e56904072cadb8a36bd9d6522ba5464c6a36a5de7e65c5698'
   action :create_if_missing
-  notifies :run, "execute[unpack #{cabal_file}]"
 end
 
 execute "unpack #{cabal_file}" do
-  command "mkdir -p #{cabal_install_path} && tar xzvf #{cabal_file} -C #{cabal_install_path} --strip-components 1"
-  notifies :run, "execute[install cabal]"
+  command %Q{
+    mkdir -p #{cabal_install_path} &&
+    tar xzvf #{cabal_file} -C #{cabal_install_path} --strip-components 1
+  }
   creates cabal_install_path
 end
 

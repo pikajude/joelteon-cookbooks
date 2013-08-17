@@ -21,8 +21,10 @@ package "postgresql92-devel"
 package "postgresql92-server"
 
 execute "update bashrc" do
-  command "echo 'PATH=$PATH:/usr/pgsql-9.2/bin' >> /etc/bashrc"
-  not_if { File.read("/etc/bashrc").include?("pgsql-9.2") }
+  command %Q{
+    echo 'PATH=$PATH:/usr/pgsql-9.2/bin' >> /etc/bashrc
+  }
+  not_if "grep -q pgsql-9.2 /etc/bashrc"
 end
 
 execute "init the database" do
