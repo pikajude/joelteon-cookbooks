@@ -44,7 +44,7 @@ end
 execute "build ghc" do
   command %{
     perl boot &&
-    ./configure &&
+    ./configure --with-ghc=/usr/bin/ghc &&
     make &&
     make install
   }
