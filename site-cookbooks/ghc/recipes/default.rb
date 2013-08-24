@@ -7,81 +7,64 @@
 # All rights reserved - Do Not Redistribute
 #
 
+include_recipe "git::source"
+include_recipe "yum::epel"
+
+package 'autoconf'
+package 'automake'
+package 'gcc'
+package 'glibc-devel'
 package 'gmp-devel'
+package 'libtool'
+package 'make'
+package 'ncurses-devel'
+package 'perl'
+package 'python'
 
-ghc_version = '7.6.3'
-root = "/usr/ghc-#{ghc_version}"
-ghc_src_prefix = "#{root}/src"
-ghc_filename = "ghc-#{ghc_version}-x86_64-unknown-linux.tar.bz2"
-ghc_install_path = "#{ghc_src_prefix}/ghc-#{ghc_version}"
-ghc_file = "#{ghc_src_prefix}/#{ghc_filename}"
-ghc_prefix = root
-
-directory ghc_src_prefix do
-  recursive true
-  action :create
+remote_file "#{Chef::Config[:file_cache_path]}/justhub.rpm" do
+  source "http://sherkin.justhub.org/el6/RPMS/x86_64/justhub-release-2.0-4.0.el6.x86_64.rpm"
 end
 
-remote_file ghc_file do
-  source "http://10.0.0.1:8080/ghc-7.6.3-x86_64-unknown-linux.tar.bz2"
-  checksum '398dd5fa6ed479c075ef9f638ef4fc2cc0fbf994e1b59b54d77c26a8e1e73ca0'
-  action :create_if_missing
+package "justhub" do
+  source "#{Chef::Config[:file_cache_path]}/justhub.rpm"
 end
 
-execute "unpack #{ghc_file}" do
-  command %Q{
-    mkdir -p #{ghc_install_path} &&
-    tar xjvf #{ghc_file} -C #{ghc_install_path} --strip-components 1
+package "haskell"
+
+git "#{Chef::Config[:file_cache_path]}/ghc" do
+  repository "http://git.haskell.org/ghc.git"
+  action :sync
+end
+
+execute "ghc sync-all" do
+  command "./sync-all --testsuite get"
+  cwd "#{Chef::Config[:file_cache_path]}/ghc"
+end
+
+execute "build ghc" do
+  command %{
+    perl boot &&
+    ./configure &&
+    make &&
+    make install
   }
-  creates ghc_install_path
+  environment({
+    "LC_ALL" => "en_US.UTF-8"
+  })
+  cwd "#{Chef::Config[:file_cache_path]}/ghc"
+  not_if '[[ -f LASTBUILD && "$(cat LASTBUILD)" == "$(date +%Y%m%d)" ]]'
 end
 
-execute "install ghc" do
-  command "./configure --prefix=/usr && make install"
-  cwd ghc_install_path
-  creates "/usr/bin/ghc"
+execute "update last build date" do
+  command "date +%Y%m%d > LASTBUILD"
+  cwd "#{Chef::Config[:file_cache_path]}/ghc"
 end
 
-
-cabal_version = '1.16.0.2'
-cabal_root = "/usr/cabal-#{cabal_version}"
-cabal_src_prefix = "#{cabal_root}/src"
-cabal_filename = "cabal-install-#{cabal_version}.tar.gz"
-cabal_install_path = "#{cabal_src_prefix}/cabal-#{cabal_version}"
-cabal_file = "#{cabal_src_prefix}/#{cabal_filename}"
-cabal_prefix = cabal_root
-
-directory cabal_src_prefix do
-  recursive true
-  action :create
+execute "add /usr/local/bin to PATH" do
+  command "echo 'export PATH=/usr/local/bin:$PATH >> /etc/bashrc'"
+  not_if "grep -q /usr/local/bin /etc/bashrc"
 end
 
-remote_file cabal_file do
-  source "http://hackage.haskell.org/packages/archive/cabal-install/#{cabal_version}/#{cabal_filename}"
-  checksum '66dfacc9f33e668e56904072cadb8a36bd9d6522ba5464c6a36a5de7e65c5698'
-  action :create_if_missing
-end
-
-execute "unpack #{cabal_file}" do
-  command %Q{
-    mkdir -p #{cabal_install_path} &&
-    tar xzvf #{cabal_file} -C #{cabal_install_path} --strip-components 1
-  }
-  creates cabal_install_path
-end
-
-execute "install cabal" do
-  command "sh bootstrap.sh --global"
-  cwd cabal_install_path
-  creates "/usr/local/bin/cabal"
-end
-
-execute "symlink cabal" do
-  command "ln -s /usr/local/bin/cabal /usr/bin/cabal"
-  creates "/usr/bin/cabal"
-end
-
-execute "update cabal package list" do
-  command "cabal update"
-  creates "/root/.cabal/packages/hackage.haskell.org"
+execute "get newest cabal" do
+  command "cabal update && cabal install cabal-install"
 end

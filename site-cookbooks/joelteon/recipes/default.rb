@@ -21,7 +21,7 @@ env = {
 
 execute "add some envars to /etc/bashrc" do
   command %Q{
-    echo 'export PATH=$PATH:/usr/local/bin
+    echo 'export PATH=/usr/local/bin:$PATH
 #{env.map{|k,v|"export %s=%s" % [k,v]}.join("\n")}' >> /etc/bashrc
   }
   not_if "grep -q PKG_CONFIG_PATH /etc/bashrc"

@@ -23,7 +23,7 @@ directory imagick_src do
 end
 
 remote_file imagick_file do
-  source "http://10.0.0.1:8080/ImageMagick.tar.gz"
+  source "http://www.imagemagick.org/download/ImageMagick.tar.gz"
   checksum "00e7ee13222f36897e24fac69630fe3d1b8050a4d462a496d51cc88e412e938f"
   action :create_if_missing
 end

@@ -17,5 +17,12 @@ psql_database "joelteon" do
   host "localhost"
   owner "joelteon"
   encoding "DEFAULT"
-  not_if "psql -U postgres -c '\\list' | grep -q joelteon"
+  not_if "psql -U postgres -c '\\list' | grep -q 'joelteon '"
+end
+
+psql_database "joelteon_test" do
+  host "localhost"
+  owner "joelteon"
+  encoding "DEFAULT"
+  not_if "psql -U postgres -c '\\list' | grep -q joelteon_test"
 end

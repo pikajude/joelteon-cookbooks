@@ -22,7 +22,7 @@ package "postgresql92-server"
 
 execute "update bashrc" do
   command %Q{
-    echo 'PATH=$PATH:/usr/pgsql-9.2/bin' >> /etc/bashrc
+    echo 'export PATH=/usr/pgsql-9.2/bin:$PATH' >> /etc/bashrc
   }
   not_if "grep -q pgsql-9.2 /etc/bashrc"
 end
