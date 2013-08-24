@@ -15,7 +15,6 @@ ghc_src_prefix = "#{root}/src"
 ghc_filename = "ghc-#{ghc_version}-x86_64-unknown-linux.tar.bz2"
 ghc_install_path = "#{ghc_src_prefix}/ghc-#{ghc_version}"
 ghc_file = "#{ghc_src_prefix}/#{ghc_filename}"
-ghc_prefix = root
 
 directory ghc_src_prefix do
   recursive true
@@ -23,7 +22,7 @@ directory ghc_src_prefix do
 end
 
 remote_file ghc_file do
-  source "http://10.0.0.1:8080/ghc-7.6.3-x86_64-unknown-linux.tar.bz2"
+  source "http://www.haskell.org/ghc/dist/#{ghc_version}/#{ghc_filename}"
   checksum '398dd5fa6ed479c075ef9f638ef4fc2cc0fbf994e1b59b54d77c26a8e1e73ca0'
   action :create_if_missing
 end
