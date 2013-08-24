@@ -65,6 +65,13 @@ execute "add /usr/local/bin to PATH" do
   not_if "grep -q /usr/local/bin /etc/bashrc"
 end
 
-execute "get newest cabal" do
-  command "cabal update && cabal install cabal-install"
+git "#{Chef::Config[:file_cache_path]}/cabal" do
+  repository "https://github.com/haskell/cabal.git"
+  action :sync
+end
+
+execute "install newest cabal-install" do
+  command "/usr/bin/cabal install -w /usr/bin/ghc Cabal/ cabal-install/ --global && hash cabal"
+  cwd "#{Chef::Config[:file_cache_path]}/cabal"
+  creates "/usr/local/bin/cabal"
 end
